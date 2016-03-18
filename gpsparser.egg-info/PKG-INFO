@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: gpsparser
+Version: 0.1.1
+Summary: gpsparser is a package for the parsing of GPS NMEA strings.
+Home-page: UNKNOWN
+Author: Val Schmidt
+Author-email: vschmidt@ccom.unh.edu
+License: GPL
+Description: UNKNOWN
+Platform: UNKNOWN

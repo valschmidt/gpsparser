@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>gpsparser.GPSString</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="gpsparser-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="gpsparser-module.html">Module&nbsp;gpsparser</a> ::
+        Class&nbsp;GPSString
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="gpsparser.GPSString-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class GPSString</h1><p class="nomargin-top"><span class="codelink"><a href="gpsparser-pysrc.html#GPSString">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">GPSString</strong>
+</pre>
+
+<hr />
+<p>A GPSString is any string that contains a complete NMEA string 
+  someplace within it. The string must start with the leading $ and end 
+  with the *hh where hh is the checksum.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="gpsparser.GPSString.FailedChecksum-class.html" class="summary-name">FailedChecksum</a><br />
+      A class creating the exception FailedChecksum, which is derived 
+        from the standard exception.Warning.
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">msg</span>)</span><br />
+      Initializes the class with any string containing a single NMEA data 
+      string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#identify" class="summary-sig-name">identify</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      This method identifies the string within gps_string, returning an ID 
+      index which is required to parse the string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.identify">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#parse" class="summary-sig-name">parse</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      This method pareses a GPSString, defining a set of attributes for the
+      class with the parsing results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.parse">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#handlegpstime" class="summary-sig-name">handlegpstime</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">timestr</span>)</span><br />
+      An internal method to convert gps time strings to datetime.time 
+      objects (default) or datetime.datetime objects when GPSString.date is
+      pre-defined with a datetime.date object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.handlegpstime">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#handle_lat" class="summary-sig-name">handle_lat</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">lattmp</span>,
+        <span class="summary-sig-arg">lathem</span>)</span><br />
+      Converts latitude strings of arbitrary precision to decimal degrees 
+      to 10 decimal places of precision (about .000001 meters).</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.handle_lat">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#handle_lon" class="summary-sig-name">handle_lon</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">lontmp</span>,
+        <span class="summary-sig-arg">lonhem</span>)</span><br />
+      Converts longitude strings of arbitrary precision to decimal degrees 
+      to 10 decimal places of precision (about .000001 meters at the 
+      equator).</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.handle_lon">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#stripisotime" class="summary-sig-name">stripisotime</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Strips and ISO 8601 time stamp from the GPSString and returns a 
+      datetime object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.stripisotime">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#datetimevec" class="summary-sig-name">datetimevec</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">dts</span>)</span><br />
+      Converts a datetime stamp in the form of a datetime object to a 
+      tab-delimited vector of numeric values.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.datetimevec">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="gpsparser.GPSString-class.html#checksum" class="summary-sig-name">checksum</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">verify</span>=<span class="summary-sig-default">False</span>)</span><br />
+      A function to calculate and return a checksum of a NMEA string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="gpsparser-pysrc.html#GPSString.checksum">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__str__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="gpsparser.GPSString-class.html#GPS_IDs" class="summary-name">GPS_IDs</a> = <code title="{'GGA': 1,
+ 'GST': 4,
+ 'GSV': 5,
+ 'HDT': 7,
+ 'PASHR': 8,
+ 'RMC': 3,
+ 'VTG': 6,
+ 'ZDA': 2}"><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">GGA</code><code class="variable-quote">'</code><code class="variable-op">: </code>1<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">GST</code><code class="variable-quote">'</code><code class="variable-op">: </code>4<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">GSV</code><code class="variable-quote">'</code><code class="variable-op">: </code>5<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">HDT</code><code class="variable-quote">'</code><code class="variable-op">: </code>7<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">PASHR</code><code class="variable-quote">'</code><code class="variable-op">: </code>8<code class="variable-op">,</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE VARIABLES ==================== -->
+<a name="section-InstanceVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="msg"></a><span class="summary-name">msg</span><br />
+      The message containing the gps string.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="debug"></a><span class="summary-name">debug</span><br />
+      A flag for writing debugging information
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">msg</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes the class with any string containing a single NMEA data 
+  string.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>msg</code></strong> - The ASCII string containing the NMEA data string.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="identify"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">identify</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.identify">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>This method identifies the string within gps_string, returning an ID 
+  index which is required to parse the string.</p>
+  <p>Currently the following message types are supported: GGA, ZDA, RMC, 
+  GST, GSV, VTG, HDT, PASHR</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.parse">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>This method pareses a GPSString, defining a set of attributes for the 
+  class with the parsing results. How each string is parsed is dependent on
+  the type of string. In any case, the fields returned are defined in 
+  &quot;self.fieldnames&quot;.</p>
+  <p>Before parsing the string's checksum if verified. The 
+  GPSString.FailedChecksum exception is raised if the checksum fails. 
+  [NOTE: The checksum verification may cause problems for some gps systems 
+  which do not calculate the checksum on the proper portion of the string. 
+  The NMEA standard specifies calculation on the portions of the string  
+  __between__ the leading &quot;$&quot; and &quot;*&quot;, but not to 
+  include either. ]</p>
+  <p>A few general rules are in order. Time stamps are converted to 
+  datetime objects. Several GPS strings contain only time fields with no 
+  year, month, or day. If gps_string.date is defined with a datetime.date 
+  object (i.e. mygpsstring.date = datetime.date(2008,12,1) ) prior to 
+  calling the parse() method, the final datetime object will combine the 
+  pre-set date with the gps parsed time value. If gps_string.date is not 
+  defined the returned datetime object returned from the parse() method 
+  will reflect the gps time as a datetime.time() object.</p>
+  <p>Latitude and Longitude are converted to decimal degrees with negative 
+  values for the Southern and Western hemispheres. They are reported to 8 
+  decimal places which equates to just over 1 mm precision.</p>
+  <p>Some fields are not parsed because they do not typically change. The 
+  units fields of meters for geoid separation in the GGA string is a 
+  classic example.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="handlegpstime"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handlegpstime</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">timestr</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.handlegpstime">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>An internal method to convert gps time strings to datetime.time 
+  objects (default) or datetime.datetime objects when GPSString.date is 
+  pre-defined with a datetime.date object.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>timestr</code></strong> - A NMEA time string of the form HHMMSS.SSS .
+          <p>Since many strings do not contain the date, defining the 
+          'date' attribute of GPSString allows one to manually set the 
+          date.</p></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="handle_lat"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_lat</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">lattmp</span>,
+        <span class="sig-arg">lathem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.handle_lat">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Converts latitude strings of arbitrary precision to decimal degrees to
+  10 decimal places of precision (about .000001 meters).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>lattmp</code></strong> - The NMEA latitude string. (DDMM.MMMM)</li>
+        <li><strong class="pname"><code>lathem</code></strong> - The NMEA latitude hemisphere ('N'/'S')</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="handle_lon"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_lon</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">lontmp</span>,
+        <span class="sig-arg">lonhem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.handle_lon">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Converts longitude strings of arbitrary precision to decimal degrees 
+  to 10 decimal places of precision (about .000001 meters at the 
+  equator).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>lontmp</code></strong> - The NMEA longitude string. (DDDMM.MMMM)</li>
+        <li><strong class="pname"><code>lonhem</code></strong> - The NMEA longitude hemisphere ('E'/'W')</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="stripisotime"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">stripisotime</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.stripisotime">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Strips and ISO 8601 time stamp from the GPSString and returns a 
+  datetime object.</p>
+  <p>For many scientific applications GPS strings are logged with the 
+  logging computer's date-time stamp. When these time stamps are in ISO 
+  8601 format, this method will extract and parse them, returning a 
+  datetime object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="datetimevec"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">datetimevec</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">dts</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.datetimevec">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Converts a datetime stamp in the form of a datetime object to a 
+  tab-delimited vector of numeric values.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>dts</code></strong> - A datetime object.
+          <p>For many scientific applications one often desires to import 
+          data into MATLAB or Octave. A simple way to do that is to produce
+          a tab-delimited date time stamp of the form:</p>
+          <p>YYYY    MH    DD    HR    MN    SS</p>
+          <p>whiich can be converted to MATLABs internal representation of 
+          time with datevec(). This method returns such as time stamp from 
+          a datetime object.</p></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="checksum"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">checksum</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">verify</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="gpsparser-pysrc.html#GPSString.checksum">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>A function to calculate and return a checksum of a NMEA string.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>verify</code></strong> - When specified as True, checksum returns True/False rather than 
+          the acutal checksum value.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="GPS_IDs"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">GPS_IDs</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">GGA</code><code class="variable-quote">'</code><code class="variable-op">: </code>1<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">GST</code><code class="variable-quote">'</code><code class="variable-op">: </code>4<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">GSV</code><code class="variable-quote">'</code><code class="variable-op">: </code>5<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">HDT</code><code class="variable-quote">'</code><code class="variable-op">: </code>7<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">PASHR</code><code class="variable-quote">'</code><code class="variable-op">: </code>8<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">RMC</code><code class="variable-quote">'</code><code class="variable-op">: </code>3<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">VTG</code><code class="variable-quote">'</code><code class="variable-op">: </code>6<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">ZDA</code><code class="variable-quote">'</code><code class="variable-op">: </code>2<code class="variable-group">}</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="gpsparser-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Mon Dec  8 18:05:06 2008
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

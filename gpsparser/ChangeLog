@@ -1,0 +1,50 @@
+Tue Jan  6 11:49:36 2009  Val Schmidt  <vschmidt@valsmbp-2.local>
+
+	* Version 0.1.1
+	Fixed bug in extracting of lat/lon minutes from text string.
+
+Tue Dec  9 17:10:51 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Version 0.1.0
+	GPSString.identify() is not called automatically by parse() when
+	GPSString.id is is not already set. This prevents the user from
+	having to call GPSString.identify() manually. 
+
+Tue Dec  9 16:40:11 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Version 0.0.10
+	Several more iterations were made to finally get a proper
+	directory and file structure to support PyPI. This version is the
+	first working copy that install properly with easy_install.
+
+Mon Dec  8 19:39:17 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Another iteration.
+
+Mon Dec  8 18:58:20 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Version 0.0.7 Another iteration to get module building and
+	installing to work.
+
+Mon Dec  8 18:42:16 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Version 0.0.6
+	Another iteration to try to get things to work properly.
+
+Mon Dec  8 18:12:54 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Versions 0.0.3 - 0.0.5
+	These versions are iterations in trying to get the structure of
+	the module correct for PyPI and setuptools. 
+
+Mon Dec  8 16:26:36 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Version 0.0.2:
+	No changes to gpsparser.py code. Modified setup.py, as I had
+	omitted the find-packages() command. Added this ChangeLog.
+
+Mon Dec  8 16:17:46 2008  Val Schmidt  <vschmidt@valsmbp.local>
+
+	* Version 0.0.1:
+	Initial version. 
+
