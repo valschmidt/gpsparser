@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '$Revision: 4799 $'.split()[1]
-__date__ = '$Date: 2008-11-20 11:09:02 -0400 (Mon, 25 Sep 2006) $'.split()[1]
-__author__ = 'Val Schmidt'
+__version__ = "0.1.2"
+__date__ = "18 Mar 2016"
+__author__ = "Val Schmidt"
 __doc__ = '''
 GPSparser, a Python GPS NMEA String parsing module. 
 
@@ -56,10 +56,10 @@ into Octave or MATLAB trivial ( C{load('datafile')} ), with the notable
 exception of GSV strings which have variable numbers of fields
 depending on the number of satellites tracked.
 
-@author: U{'''+__author__+'''<http://aliceandval.com/valswork>}
+@author: '''+__author__+'''
 @organization: Center for Coastal and Ocean Mapping, University of New Hampshire 
 @version: ''' + __version__ +'''
-@copyright: 2008
+@copyright: 2008,2016
 @status: under development
 @license: GPL
 
@@ -93,7 +93,8 @@ class GPSString(object):
             'GSV' : 5, \
             'VTG' : 6, \
             'HDT' : 7 ,\
-            'PASHR' : 8}
+            'PASHR' : 8,\
+            'GGK' : 9}
 
 
     def __init__(self,msg):
@@ -114,7 +115,7 @@ class GPSString(object):
         which is required to parse the string. 
         
         Currently the following message types are supported:
-        GGA, ZDA, RMC, GST, GSV, VTG, HDT, PASHR
+        GGA, ZDA, RMC, GST, GSV, VTG, HDT, PASHR, GGK
         '''
         'A dictionary of supported strings and their numeric indentifiers'
 
@@ -350,7 +351,28 @@ class GPSString(object):
                 self.headingaccuracy = dec.Decimal(fields[9])
                 self.headingalgorithm = dec.Decimal(fields[10])
                 self.imustatus = dec.Decimal(fields[11])
-        
+
+        elif self.id == 9:
+            'GGK'
+            exp = '(?P<match>\GGK.*)\*(?P<chksum>..)'
+            m = re.search(exp,self.msg)
+            if m:
+                gps_extract = m.group('match')
+                fields = gps_extract.split(',')
+                'Handle GGK Fields'
+                print fields[2]
+                print fields[2][4:6]
+                self.date = datetime.date(int(fields[2][4:6])+2000,
+                                          int(fields[2][0:2]),
+                                          int(fields[2][2:4]))
+                self.handlegpstime(fields[1])
+                self.handle_lat(fields[3],fields[4])
+                self.handle_lon(fields[5],fields[6])
+                self.quality = dec.Decimal(fields[7])
+                self.svs = dec.Decimal(fields[8])
+                self.dop = dec.Decimal(fields[9])
+                self.eht = dec.Decimal(fields[10][3:fields[10].__len__()])
+                
         # Create a dictionary of the fields parsed.
         keys = self.__dict__.keys()
         keys.remove('debug')
@@ -535,6 +557,7 @@ if __name__ == '__main__':
             sys.stderr.write('Unrecognized NMEA string.\n')
             continue
 
+
         'Only handle string specified'
         if id != gps.GPS_IDs[stringtype]:
             continue
@@ -554,9 +577,9 @@ if __name__ == '__main__':
                 sys.stderr.write( "Failed Checksum: " + gps.checksum() + 
                                   " :: " + gps.msg + '\n') 
                 continue
-            
-            fieldstoprint = [gps.datetimevec(PCtime), 
-                             gps.datetimevec(gps.datetime), 
+
+
+            fieldstoprint = [gps.datetimevec(gps.datetime), 
                              gps.latitude, 
                              gps.longitude, 
                              gps.quality,
@@ -564,6 +587,9 @@ if __name__ == '__main__':
                              gps.hdop, 
                              gps.antennaheightMSL,
                              gps.geoid]
+            if PCtime:
+                fieldstoprint.insert(0,gps.datetimevec(PCtime))
+
             print "\t".join(map(str,fieldstoprint)).expandtabs()
 
         if id == 2:
@@ -580,8 +606,10 @@ if __name__ == '__main__':
 
                 continue
 
-            fieldstoprint = [gps.datetimevec(PCtime),
-                             gps.datetimevec(gps.datetime)]
+            fieldstoprint = [gps.datetimevec(gps.datetime)]
+
+            if PCtime:
+                fieldstoprint.insert(0,gps.datetimevec(PCtime))
 
             print "\t".join(map(str,fieldstoprint)).expandtabs()
 
@@ -597,13 +625,16 @@ if __name__ == '__main__':
                                   " :: " + gps.msg + '\n') 
                 continue
 
-            fieldstoprint = [gps.datetimevec(PCtime),
-                             gps.datetimevec(gps.datetime),
+            fieldstoprint = [gps.datetimevec(gps.datetime),
                              gps.fixstatus,
                              gps.latitude,
                              gps.longitude,
                              gps.knots,
                              gps.cog]
+
+            if PCtime:
+                fieldstoprint.insert(0,gps.datetimevec(PCtime))
+
             print "\t".join(map(str,fieldstoprint)).expandtabs()
 
         if id == 4:
@@ -619,8 +650,7 @@ if __name__ == '__main__':
                                   " :: " + gps.msg + '\n') 
                 continue
             
-            fieldstoprint = [gps.datetimevec(PCtime),
-                             gps.datetimevec(gps.datetime),
+            fieldstoprint = [gps.datetimevec(gps.datetime),
                              gps.residualrms,
                              gps.semimajor,
                              gps.semiminor,
@@ -628,6 +658,9 @@ if __name__ == '__main__':
                              gps.lat1sigma,
                              gps.lon1sigma,
                              gps.height1sigma]
+            if PCtime:
+                fieldstoprint.insert(0,gps.datetimevec(PCtime))
+
             print "\t".join(map(str,fieldstoprint)).expandtabs()
                               
         if id == 5:
@@ -654,7 +687,7 @@ if __name__ == '__main__':
         if id == 6:
             try:
                 gps.parse()
-            except self.FailedChecksum:
+            except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum:" + gps.checksum() + 
                                   "::" + gps.msg + '\n') 
                 continue
@@ -664,8 +697,24 @@ if __name__ == '__main__':
         if id == 8:
             try:
                 gps.parse()
-            except self.FailedChecksum:
+            except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum:" + gps.checksum() + 
                                   "::" + gps.msg + '\n') 
                 continue
+        
+        if id == 9:
+            'GGK'
+            try:
+                gps.parse()
+            except gps.FailedChecksum:
+                sys.stderr.write( "Failed Checksum:" + gps.checksum() + 
+                                  "::" + gps.msg + '\n') 
 
+            fieldstoprint = [gps.datetimevec(gps.datetime), 
+                             gps.latitude, 
+                             gps.longitude, 
+                             gps.quality,
+                             gps.svs, 
+                             gps.dop, 
+                             gps.eht]
+            print "\t".join(map(str,fieldstoprint)).expandtabs()

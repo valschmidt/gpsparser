@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-__version__ = 0.1.2
-__date__ = 18 Mar 2016
+__version__ = "0.1.3"
+__date__ = "18 Mar 2016"
 __author__ = "Val Schmidt"
 __doc__ = '''
 GPSparser, a Python GPS NMEA String parsing module. 
