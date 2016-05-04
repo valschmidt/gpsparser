@@ -69,15 +69,15 @@ depending on the number of satellites tracked.
 
 '''
 
-import os
+#import os
 import sys
 import datetime
 import re
-import string
+#import string
 import decimal as dec
-import pdb
+#import pdb
 from operator import xor
-import exceptions 
+#import exceptions 
 
 class GPSString(object):
     '''
@@ -108,6 +108,8 @@ class GPSString(object):
         'The message containing the gps string.'
         self.debug = False
         'A flag for writing debugging information'
+        
+        self.id = None
 
     def identify(self):
         '''
@@ -161,15 +163,10 @@ class GPSString(object):
 
         ' Verify Checksum'
         if not self.checksum(True):
-            raise self.FailedChecksum, ("Checksum: " + self.checksum())
+            raise self.FailedChecksum, ("Failed Checksum! Line: " + self.msg)
 
 
-        ' If the string is already identified (self.id is set) go on, '
-        ' if not, then identify it. This prevents the user from having to '
-        ' identify it manually. '
-        try:
-            tmp = self.id
-        except:
+        if self.id == None:
             self.identify()
 
         ' Parse the code'
@@ -180,7 +177,7 @@ class GPSString(object):
             if m:
                 gps_extract = m.group('match')
                 fields = gps_extract.split(',')
-                
+
                 'Handle GGA Fields'
                 self.handlegpstime(fields[1])                
                 self.handle_lat( fields[2], fields[3] )
@@ -194,22 +191,29 @@ class GPSString(object):
                 except dec.InvalidOperation:
                     if self.debug:
                         print "The field GEOID Height may not be present."
-                        print fields[11]
+                        print self.msg
+                        #print fields[11]
                         self.geoid = dec.Decimal('NaN')
                 try:
                     self.dgpsage = dec.Decimal(fields[13])
                 except dec.InvalidOperation:
                     if self.debug: 
                         print "The field DGPS Age may not be present."
-                        print fields[13]
+                        print self.msg                        
+                        #print fields[13]
                         self.dgpspage = dec.Decimal('NaN')
                 try:
                     self.stationid = dec.Decimal(fields[14] )
                 except dec.InvalidOperation:
                     if self.debug: 
                         print "The field DGPS Station ID may not be present."
-                        print fields[14]
+                        print self.msg
+                        #print 'StationID: %s' % fields[14]
                         self.stationid = dec.Decimal('NaN')
+                        
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+                
         elif self.id == 2:
             'ZDA'
             exp = '(?P<match>\$..ZDA.*)\*(?P<chksum>..)'
@@ -237,7 +241,9 @@ class GPSString(object):
                         print "The field Local TZ Offset Minutes may not be present."
                         print fields[6]
                         self.tzoffsetminutes = dec.Decimal('NaN')
-
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+ 
 
         elif self.id == 3:
             'RMC' 
@@ -261,7 +267,9 @@ class GPSString(object):
                 self.handlegpslon(fields[5], fields[6])
                 self.knots = fields[7]
                 self.cog = fields[8]
-
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+ 
         elif self.id == 4:
             'GST'
             exp = '(?P<match>\$..GST.*)\*(?P<chksum>..)'
@@ -278,7 +286,9 @@ class GPSString(object):
                 self.lat1sigma = dec.Decimal(fields[6])
                 self.lon1sigma = dec.Decimal(fields[7])
                 self.height1sigma = dec.Decimal(fields[8])
-
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+ 
         elif self.id == 5:
             'GSV'
             exp = '(?P<match>\$..GSV.*)\*(?P<chksum>..)'
@@ -310,7 +320,9 @@ class GPSString(object):
                     except dec.InvalidOperation:
                         # The spec says snr should be null when "not tracking"
                         self.snr.append(dec.Decimal('NaN'))
-
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+ 
         elif self.id == 6:
             'VTG'
             exp = '(?P<match>\$..VTG.*)\*(?P<chksum>..)'
@@ -322,6 +334,8 @@ class GPSString(object):
                 self.cog = dec.Decimal(fields[1])
                 self.knots = dec.Decimal(fields[5])
                 self.kmph = dec.Decimal(fields[7])
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
                 
 
         elif self.id == 7:
@@ -333,6 +347,10 @@ class GPSString(object):
                 fields = gps_extract.split(',')
                 'Handle HDT Fields'
                 self.heading = fields[1]
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+                 
+                
         elif self.id == 8:
             'PASHR'
             exp = '(?P<match>\$PASHR.*)\*(?P<chksum>..)'
@@ -351,7 +369,9 @@ class GPSString(object):
                 self.headingaccuracy = dec.Decimal(fields[9])
                 self.headingalgorithm = dec.Decimal(fields[10])
                 self.imustatus = dec.Decimal(fields[11])
-
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+ 
         elif self.id == 9:
             'GGK'
             exp = '(?P<match>\GGK.*)\*(?P<chksum>..)'
@@ -372,7 +392,9 @@ class GPSString(object):
                 self.svs = dec.Decimal(fields[8])
                 self.dop = dec.Decimal(fields[9])
                 self.eht = dec.Decimal(fields[10][3:fields[10].__len__()])
-                
+            else:
+                raise self.FailedParsing, 'Failed to parse %s' % self.msg
+               
         # Create a dictionary of the fields parsed.
         keys = self.__dict__.keys()
         keys.remove('debug')
@@ -498,10 +520,14 @@ class GPSString(object):
             data = m.group('match')
             tmp = map(ord, data[1:])
             checksum = hex(reduce(xor, tmp))
+            if checksum.__len__() == 3:
+                checksum = checksum[0:2] + '0' + checksum[2] 
             if verify:
                 return checksum[2:4].upper() == m.group('chksum')
             else:
                 return checksum[2:4].upper()
+
+
 
 # I'm keeping this because I once had code that simply returned the checksum for
 # a string (that may not be a well-formatted NMEA string) which is required above.
@@ -524,6 +550,14 @@ class GPSString(object):
         checksum is incorrect indicating corruption to the data.  
         '''
         pass
+    class FailedParsing(Warning):
+        '''
+        A class creating the eception FailedParsing, which is derived from the 
+        standard exception Warning. This exception is raised then a GPS string 
+        failes to parse correctly.
+        '''
+
+
 
 ######################################################################################
 ######################## Module Code Ends Here. ######################################
@@ -536,49 +570,100 @@ if __name__ == '__main__':
     supportedstrings.sort()
     supportedstrings = ' '.join(supportedstrings)
 
+    ''' Handle options'''
     from optparse import OptionParser
     optionparser = OptionParser(usage="%prog [options]",
                            version="%prog "+__version__+' ('+__date__+')')
     optionparser.add_option('-f','--filename', dest='filename',action='store',
                        help='specify the filename')
     optionparser.add_option('-s','--stringtype',dest='stringtype',action='store',
-                           type='string', help='specify which string to parse by specifying the three-letter identifier (Currently supported strings: '+ supportedstrings + ' )')
+                           type='string', 
+                           help='specify which string to parse by specifying the three-letter identifier (Currently supported strings: '+ supportedstrings + ' )')
+    optionparser.add_option('-v','--verbose', dest='verbose',action='count',
+                       help='Verbosity')
+    optionparser.add_option('-o', dest='outputtofile',action='store_true',
+                       help='output to a file (inputfilename_parsed.txt)')
+    optionparser.add_option('--outfile', dest='outfilename',action='store',
+                       help='specify an output filename', default=None)
 
+    #optionparser.add_option('-p', dest='outfilename',action='store',
+    #                   help='specify an output filename')
+            
     (options,args) = optionparser.parse_args()
 
     filename = options.filename
     stringtype = options.stringtype
+    verbose = options.verbose
+    outputtofile = options.outputtofile
+    outfilename = options.outfilename
+            
+
+    fid = None
+    if outputtofile:
+        if outfilename == None:
+            outfilename = filename[0:-4] + '_parsed_'+ stringtype +'.txt'
+            if verbose >= 1:
+                print "Writing to %s" % outfilename                
+        fid = file(outfilename,'w')
+    
+
+    def printfields(fieldstoprint,fid=None):
+        ''' A function to print the fields under different circumstances.'''
+        if fid:
+            fid.write("\t".join(map(str,fieldstoprint)).expandtabs() + '\n')
+        else:
+            print "\t".join(map(str,fieldstoprint)).expandtabs()
+
 
     for line in file(filename,'r'):
+
         gps = GPSString(line)
+        if verbose >=3:
+            gps.debug = verbose
+            
         try:
             id = gps.identify()
         except NotImplementedError:
-            sys.stderr.write('Unrecognized NMEA string.\n')
+            if verbose >= 1:
+                sys.stderr.write('Unrecognized NMEA string: %s\n' % gps.msg)
             continue
-
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+            raise
 
         'Only handle string specified'
         if id != gps.GPS_IDs[stringtype]:
             continue
 
+        '''Since GPS NMEA strings have no date, we have to create one. If the
+        data is timestaped with an ISO format time, then use that. If not, 
+        use the system time.'''
+        
         'This will die silently if there is not pc timestamp.'
         PCtime = gps.stripisotime()
+        try:
+            gps.date = PCtime.date()
+        except:
+            print "NO Time Stamping Found. Using today's date."
+            gps.date = datetime.datetime.utcnow().date()
         
+        ''' Parse and write data.'''
         if id == 1:
-            try:
-                gps.date = PCtime.date()
-            except:
-                gps.date = datetime.datetime.utcnow().date()
 
             try: 
                 gps.parse()
             except gps.FailedChecksum:
-                sys.stderr.write( "Failed Checksum: " + gps.checksum() + 
+                sys.stderr.write( "Failed Checksum: "
                                   " :: " + gps.msg + '\n') 
                 continue
-
-
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+                
+           
             fieldstoprint = [gps.datetimevec(gps.datetime), 
                              gps.latitude, 
                              gps.longitude, 
@@ -590,41 +675,46 @@ if __name__ == '__main__':
             if PCtime:
                 fieldstoprint.insert(0,gps.datetimevec(PCtime))
 
-            print "\t".join(map(str,fieldstoprint)).expandtabs()
+            printfields(fieldstoprint,fid)
+            
 
         if id == 2:
-            try:
-                gps.date = PCtime.date()
-            except:
-                gps.date = datetime.datetime.utcnow().date()
 
             try: 
                 gps.parse()
             except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum: " + gps.checksum() + 
                                   " :: " + gps.msg + '\n') 
-
                 continue
-
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+                
             fieldstoprint = [gps.datetimevec(gps.datetime)]
 
             if PCtime:
                 fieldstoprint.insert(0,gps.datetimevec(PCtime))
 
-            print "\t".join(map(str,fieldstoprint)).expandtabs()
+            printfields(fieldstoprint,fid)
 
         if id == 3:
-            try:
-                gps.date = PCtime.date()
-            except:
-                gps.date = datetime.datetime.utcnow().date()
+
             try:
                 gps.parse()
-            except self.FailedChecksum:
+            except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum: " + gps.checksum() + 
                                   " :: " + gps.msg + '\n') 
                 continue
-
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+                  
             fieldstoprint = [gps.datetimevec(gps.datetime),
                              gps.fixstatus,
                              gps.latitude,
@@ -635,21 +725,23 @@ if __name__ == '__main__':
             if PCtime:
                 fieldstoprint.insert(0,gps.datetimevec(PCtime))
 
-            print "\t".join(map(str,fieldstoprint)).expandtabs()
+            printfields(fieldstoprint,fid)
 
         if id == 4:
-            try:
-                gps.date = PCtime.date()
-            except:
-                gps.date = datetime.datetime.utcnow().date()
 
             try:
                 gps.parse()
-            except self.FailedChecksum:
+            except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum: " + gps.checksum() + 
                                   " :: " + gps.msg + '\n') 
                 continue
-            
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+                  
             fieldstoprint = [gps.datetimevec(gps.datetime),
                              gps.residualrms,
                              gps.semimajor,
@@ -661,38 +753,54 @@ if __name__ == '__main__':
             if PCtime:
                 fieldstoprint.insert(0,gps.datetimevec(PCtime))
 
-            print "\t".join(map(str,fieldstoprint)).expandtabs()
+            printfields(fieldstoprint,fid)
                               
         if id == 5:
-            try:
-                gps.date = PCtime.date()
-            except:
-                gps.date = datetime.datetime.utcnow().date()
 
             try: 
                 gps.parse()
-            except self.FailedChecksum:
+            except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum: " + gps.checksum() + 
                                   " :: " + gps.msg + '\n') 
                 continue
-
-            fieldstoprint = ([gps.datetimevec(PCtime)] +  
-                             map(str,gps.PRN) +
-                             map(str,gps.elevation) +
-                             map(str,gps.azimuth) +
-                             map(str,gps.snr) )
-            print "\t".join(map(str,fieldstoprint)).expandtabs()
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+                  
+                
+            fieldstoprint = [gps.datetimevec(PCtime),  
+                             gps.PRN,
+                             gps.elevation,
+                             gps.azimuth,
+                             gps.snr]
+                             
+            printfields(fieldstoprint,fid)
 
 
         if id == 6:
+            'VTG'
             try:
                 gps.parse()
             except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum:" + gps.checksum() + 
                                   "::" + gps.msg + '\n') 
                 continue
-
-
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+  
+            fieldstoprint = [gps.datetimevec(PCtime),
+                            gps.cog,
+                            gps.knots,
+                            gps.kmph]
+                            
+            printfields(fieldstoprint,fid)
         
         if id == 8:
             try:
@@ -701,7 +809,13 @@ if __name__ == '__main__':
                 sys.stderr.write( "Failed Checksum:" + gps.checksum() + 
                                   "::" + gps.msg + '\n') 
                 continue
-        
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+          
         if id == 9:
             'GGK'
             try:
@@ -709,7 +823,13 @@ if __name__ == '__main__':
             except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum:" + gps.checksum() + 
                                   "::" + gps.msg + '\n') 
-
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+  
             fieldstoprint = [gps.datetimevec(gps.datetime), 
                              gps.latitude, 
                              gps.longitude, 
@@ -717,4 +837,7 @@ if __name__ == '__main__':
                              gps.svs, 
                              gps.dop, 
                              gps.eht]
-            print "\t".join(map(str,fieldstoprint)).expandtabs()
+            printfields(fieldstoprint,fid)
+
+if outputtofile:
+    fid.close()
