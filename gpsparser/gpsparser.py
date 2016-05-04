@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "0.1.3"
+__version__ = "0.2.0"
 __date__ = "18 Mar 2016"
 __author__ = "Val Schmidt"
 __doc__ = '''
