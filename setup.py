@@ -6,7 +6,7 @@ setup.py script for gpsparser.py
 from setuptools import setup, find_packages
 
 setup(name = 'gpsparser',
-      version = '0.3.0',      
+      version = '0.3.1',      
       author = "Val Schmidt",
       maintainer = "Val Schmidt",
       maintainer_email = "vschmidt@ccom.unh.edu",
