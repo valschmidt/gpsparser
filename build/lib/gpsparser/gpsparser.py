@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __date__ = "27 Sept 2016"
 __author__ = "Val Schmidt"
 __doc__ = '''
@@ -67,6 +67,8 @@ depending on the number of satellites tracked.
 @bug: I've tried to handle several fields gracefully when they are commonly missing, but an empty line with a proper checksum, such as is common before a GPS has a fix will surely cause the code to fail. 
 
 @todo: Unit tests. There are none so far and there needs to be. 
+@todo: Add output in MATLAB .mat format.
+@todo: Add output in HDF5 or NetCDF format.
 
 '''
 
