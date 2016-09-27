@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-__version__ = "0.2.0"
-__date__ = "18 Mar 2016"
+__version__ = "0.3.0"
+__date__ = "27 Sept 2016"
 __author__ = "Val Schmidt"
 __doc__ = '''
 GPSparser, a Python GPS NMEA String parsing module. 
@@ -16,6 +16,7 @@ hh is the two character checksum. All of the following examples are fine:
     - C{RTK1_GPS         DATA    2008-11-21T15:48:10.510017      $GPGGA,154809.00,4305.52462642,N,07051.89568468,W,1,3,4.1,48.971,M,-32.985,M,,*5}
     - C{09/12/2003,04:01:46.666,$GPGGA,040145.871,7117.3458,N,15700.3788,W,1,06,1.4,014.6,M,-000.4,M,,*50}
     - C{posnav  2008:226:18:31:34.1365  $INGGA,183133.898,7120.91996,N,15651.72629,W,1,11,0.8,-1.06,M,,,,*19}
+    - C{1473622989.451 $GNGGA,194309.9,4308.15154,N,07056.35631,W,1,13,0.7,42.4,M,-31.9,M,,*43}
 
 GPSparser provides methods for extracting the NMEA string from the
 larger set of ASCII characters, verifying its checksum and parsing the
@@ -59,7 +60,7 @@ depending on the number of satellites tracked.
 @author: '''+__author__+'''
 @organization: Center for Coastal and Ocean Mapping, University of New Hampshire 
 @version: ''' + __version__ +'''
-@copyright: 2008,2016
+@copyright: 2008-2016
 @status: under development
 @license: GPL
 
@@ -123,8 +124,9 @@ class GPSString(object):
 
         for key in self.GPS_IDs.keys():
             if re.search( key, self.msg):
-                self.id = self.GPS_IDs[key]
-                return self.GPS_IDs[key]
+                # self.id = self.GPS_IDs[key]
+                self.id = key
+                return 
 
         raise NotImplementedError, ("This string is not recognized: " + self.msg)
 
@@ -170,7 +172,7 @@ class GPSString(object):
             self.identify()
 
         ' Parse the code'
-        if self.id == 1:
+        if self.id == 'GGA':
             'GGA'
             exp = '(?P<match>\$..GGA.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -214,7 +216,7 @@ class GPSString(object):
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
                 
-        elif self.id == 2:
+        elif self.id == 'ZDA':
             'ZDA'
             exp = '(?P<match>\$..ZDA.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -245,7 +247,7 @@ class GPSString(object):
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
  
 
-        elif self.id == 3:
+        elif self.id == 'RMC':
             'RMC' 
             exp = '(?P<match>\$..RMC.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -270,7 +272,7 @@ class GPSString(object):
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
  
-        elif self.id == 4:
+        elif self.id == 'GST':
             'GST'
             exp = '(?P<match>\$..GST.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -289,7 +291,7 @@ class GPSString(object):
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
  
-        elif self.id == 5:
+        elif self.id == 'GSV':
             'GSV'
             exp = '(?P<match>\$..GSV.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -323,7 +325,7 @@ class GPSString(object):
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
  
-        elif self.id == 6:
+        elif self.id == 'VTG':
             'VTG'
             exp = '(?P<match>\$..VTG.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -338,7 +340,7 @@ class GPSString(object):
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
                 
 
-        elif self.id == 7:
+        elif self.id == 'HDT':
             'HDT'
             exp = '(?P<match>\$..HDT.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -351,7 +353,7 @@ class GPSString(object):
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
                  
                 
-        elif self.id == 8:
+        elif self.id == 'PASHR':
             'PASHR'
             exp = '(?P<match>\$PASHR.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -372,7 +374,7 @@ class GPSString(object):
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
  
-        elif self.id == 9:
+        elif self.id == 'GGK':
             'GGK'
             exp = '(?P<match>\GGK.*)\*(?P<chksum>..)'
             m = re.search(exp,self.msg)
@@ -467,7 +469,7 @@ class GPSString(object):
 
     def stripisotime(self):
         '''
-        Strips and ISO 8601 time stamp from the GPSString and returns a datetime
+        Strips an ISO 8601 time stamp from the GPSString and returns a datetime
         object.
 
         For many scientific applications GPS strings are logged with the 
@@ -475,6 +477,8 @@ class GPSString(object):
         ISO 8601 format, this method will extract and parse them, returning a
         datetime object. 
         '''
+
+        # FIX: Should append .* + self.id to this regexp. 
         iso_exp = re.compile('(?P<year>\d\d\d\d)-(?P<month>\d\d)-(?P<day>\d\d)T(?P<hour>\d\\d):(?P<minute>\d\d):(?P<seconds>\d\d\.\d+)') 
         m = re.search(iso_exp,self.msg)
         if m:
@@ -487,6 +491,18 @@ class GPSString(object):
             microseconds = int( ( float(m.group('seconds')) - seconds ) * 1000000)
             dts = datetime.datetime(year, month, day, hour, minute, seconds, microseconds)
             return dts
+
+    def stripepochtime(self):
+        '''
+        Strips an EPOCH time stamp from the GPSString and returns a datetime 
+        object
+        '''
+        epoch_exp = re.compile('(?P<epochtime>\d+\.\d+).*\$??' + self.id)
+        m = re.search(epoch_exp,self.msg)
+        if m:
+            epochtime = float(m.group('epochtime'))
+            dts = datetime.datetime.utcfromtimestamp(epochtime)
+        return dts
 
     def datetimevec(self,dts):
         '''
@@ -573,9 +589,10 @@ if __name__ == '__main__':
     ''' Handle options'''
     from optparse import OptionParser
     optionparser = OptionParser(usage="%prog [options]",
-                           version="%prog "+__version__+' ('+__date__+')')
+                                version="%prog "+__version__+' ('+__date__+')',
+                                epilog='Supported strings: ' + supportedstrings)
     optionparser.add_option('-f','--filename', dest='filename',action='store',
-                       help='specify the filename')
+                            help='specify the filename')
     optionparser.add_option('-s','--stringtype',dest='stringtype',action='store',
                            type='string', 
                            help='specify which string to parse by specifying the three-letter identifier (Currently supported strings: '+ supportedstrings + ' )')
@@ -585,6 +602,8 @@ if __name__ == '__main__':
                        help='output to a file (inputfilename_parsed.txt)')
     optionparser.add_option('--outfile', dest='outfilename',action='store',
                        help='specify an output filename', default=None)
+
+
 
     #optionparser.add_option('-p', dest='outfilename',action='store',
     #                   help='specify an output filename')
@@ -596,6 +615,10 @@ if __name__ == '__main__':
     verbose = options.verbose
     outputtofile = options.outputtofile
     outfilename = options.outfilename
+    
+    if not GPSString.GPS_IDs.has_key(stringtype):
+        print 'Unsupported string type: ' + stringtype
+        sys.exit()
             
 
     fid = None
@@ -620,9 +643,11 @@ if __name__ == '__main__':
         gps = GPSString(line)
         if verbose >=3:
             gps.debug = verbose
+            print "Entering debug mode"
             
         try:
-            id = gps.identify()
+            gps.identify()  # populates gps.id
+            
         except NotImplementedError:
             if verbose >= 1:
                 sys.stderr.write('Unrecognized NMEA string: %s\n' % gps.msg)
@@ -631,27 +656,44 @@ if __name__ == '__main__':
             print "Unexpected error:", sys.exc_info()[0]
             raise
 
+        if gps.debug:
+            print 'String Type: ' + gps.id
+
         'Only handle string specified'
-        if id != gps.GPS_IDs[stringtype]:
+        if gps.id != stringtype:
             continue
 
         '''Since GPS NMEA strings have no date, we have to create one. If the
         data is timestaped with an ISO format time, then use that. If not, 
         use the system time.'''
         
-        'This will die silently if there is not pc timestamp.'
+        # This will die silently if there is not a pc timestamp or if it of unsupported type. 
         PCtime = gps.stripisotime()
+        if PCtime == None:
+            PCtime = gps.stripepochtime()
+            
+        # Many GPS strings have only a time stamp with no date. Here we try to 
+        # use the date provided by a PC time stamp during the logging porcess.
+        # If there is no PC time stamp, one can only guess at the date and 
+        # assume it is today. 
+        
+        # FIX: Provide a way to force the date if it is known on the command 
+        # line. 
         try:
             gps.date = PCtime.date()
         except:
-            print "NO Time Stamping Found. Using today's date."
+            if gps.debug:
+                print "NO Time Stamping Found. Using today's date."
             gps.date = datetime.datetime.utcnow().date()
         
         ''' Parse and write data.'''
-        if id == 1:
+        if gps.id == 'GGA':
 
             try: 
                 gps.parse()
+                if gps.debug:
+                    print "Fields: " + ','.join(gps.fields.keys())
+                    
             except gps.FailedChecksum:
                 sys.stderr.write( "Failed Checksum: "
                                   " :: " + gps.msg + '\n') 
@@ -678,7 +720,7 @@ if __name__ == '__main__':
             printfields(fieldstoprint,fid)
             
 
-        if id == 2:
+        if gps.id == 'ZDA':
 
             try: 
                 gps.parse()
@@ -700,7 +742,7 @@ if __name__ == '__main__':
 
             printfields(fieldstoprint,fid)
 
-        if id == 3:
+        if gps.id == 'RMC':
 
             try:
                 gps.parse()
@@ -727,7 +769,7 @@ if __name__ == '__main__':
 
             printfields(fieldstoprint,fid)
 
-        if id == 4:
+        if gps.id == 'GST':
 
             try:
                 gps.parse()
@@ -755,7 +797,7 @@ if __name__ == '__main__':
 
             printfields(fieldstoprint,fid)
                               
-        if id == 5:
+        if gps.id == 'GSV':
 
             try: 
                 gps.parse()
@@ -780,7 +822,7 @@ if __name__ == '__main__':
             printfields(fieldstoprint,fid)
 
 
-        if id == 6:
+        if gps.id == 'VTG':
             'VTG'
             try:
                 gps.parse()
@@ -802,7 +844,7 @@ if __name__ == '__main__':
                             
             printfields(fieldstoprint,fid)
         
-        if id == 8:
+        if gps.id == 'HDT':
             try:
                 gps.parse()
             except gps.FailedChecksum:
@@ -815,8 +857,41 @@ if __name__ == '__main__':
             except:
                 print "Unexpected error:", sys.exc_info()[0]
                 raise
+                
+            fieldstoprint = [gps.datetimevec(PCtime),
+                             gps.heading]
+            printfields(fieldstoprint,fid)
+            
+                             
+        if gps.id == 'PASHR':
+            try:
+                gps.parse()
+            except gps.FailedChecksum:
+                sys.stderr.write( "Failed Checksum:" + gps.checksum() + 
+                                  "::" + gps.msg + '\n') 
+                continue
+            except gps.FailedParsing:
+                sys.stderr.write("Failed Parsing Line: %s" % line)
+                continue
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                raise
+            
+            fieldstoprint = [gps.datetimevec(gps.datetime),
+                             gps.heading,
+                             gps.roll,
+                             gps.pitch,
+                             gps.heave,
+                             gps.rollaccuracy,
+                             gps.headingaccuracy,
+                             gps.headingalgorithm,
+                             gps.iimustatus]
+            if PCtime:
+                fieldstoprint.insert(0,gps.datetimevec(PCtime))
+                  
+            printfields(fieldstoprint,fid)
           
-        if id == 9:
+        if gps.id == 'GGK':
             'GGK'
             try:
                 gps.parse()
@@ -839,5 +914,5 @@ if __name__ == '__main__':
                              gps.eht]
             printfields(fieldstoprint,fid)
 
-if outputtofile:
-    fid.close()
+    if outputtofile:
+        fid.close()
