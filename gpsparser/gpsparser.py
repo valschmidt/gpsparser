@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+from __future__ import print_function  # Used for print function
+# See :http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python
 __version__ = "0.3.1"
 __date__ = "27 Sept 2016"
 __author__ = "Val Schmidt"
@@ -71,7 +72,6 @@ depending on the number of satellites tracked.
 @todo: Add output in HDF5 or NetCDF format.
 
 '''
-
 import os
 import sys
 import datetime
@@ -82,6 +82,10 @@ import decimal as dec
 #import pdb
 from operator import xor
 #import exceptions 
+
+# A function for writing to standard error vs standard out. 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 class GPSString(object):
     '''
@@ -195,24 +199,24 @@ class GPSString(object):
                     self.geoid = dec.Decimal(fields[11])
                 except dec.InvalidOperation:
                     if self.debug:
-                        print "The field GEOID Height may not be present."
-                        print self.msg
+                        eprint("The field GEOID Height may not be present.")
+                        eprint(self.msg)
                         #print fields[11]
                         self.geoid = dec.Decimal('NaN')
                 try:
                     self.dgpsage = dec.Decimal(fields[13])
                 except dec.InvalidOperation:
                     if self.debug: 
-                        print "The field DGPS Age may not be present."
-                        print self.msg                        
+                        eprint("The field DGPS Age may not be present.")
+                        eprint(self.msg)                        
                         #print fields[13]
                         self.dgpspage = dec.Decimal('NaN')
                 try:
                     self.stationid = dec.Decimal(fields[14] )
                 except dec.InvalidOperation:
                     if self.debug: 
-                        print "The field DGPS Station ID may not be present."
-                        print self.msg
+                        eprint("The field DGPS Station ID may not be present.")
+                        eprint(self.msg)
                         #print 'StationID: %s' % fields[14]
                         self.stationid = dec.Decimal('NaN')
                         
@@ -235,16 +239,16 @@ class GPSString(object):
                     self.tzoffsethours = dec.Decimal( fields[5] )
                 except dec.InvalidOperation:
                     if self.debug:
-                        print "Thef ield Local TZ Offset Hours may not be present."
-                        print fields[5]
+                        eprint("Thef ield Local TZ Offset Hours may not be present.")
+                        eprint (fields[5])
                         self.tzoffsethours = dec.Decimal('NaN')
 
                 try:
                     self.tzoffsetminutes = dec.Decimal( fields[6] )
                 except dec.InvalidOperation:
                     if self.debug: 
-                        print "The field Local TZ Offset Minutes may not be present."
-                        print fields[6]
+                        eprint("The field Local TZ Offset Minutes may not be present.")
+                        eprint(fields[6])
                         self.tzoffsetminutes = dec.Decimal('NaN')
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
@@ -260,16 +264,16 @@ class GPSString(object):
                 'Handle RMC Fields'
                 'Getting the date first ensure handlegpstime will return a full'
                 'datetime object'                
-                self.datetime.date(int(fields[9][4:6]+2000),
+                self.datetime = datetime.date(int(fields[9][4:6])+2000,
                                    int(fields[9][2:4]),
                                    int(fields[10][0:2]))
-                self.handlgpstime(fields[1])
+                self.handlegpstime(fields[1])
                 if fields[2] == 'A':
                     self.fixstatus = 1
                 else:
                     self.fixstatus = 0
-                self.handlegpslat(fields[3], fields[4])
-                self.handlegpslon(fields[5], fields[6])
+                self.handle_lat(fields[3], fields[4])
+                self.handle_lon(fields[5], fields[6])
                 self.knots = fields[7]
                 self.cog = fields[8]
             else:
@@ -310,7 +314,7 @@ class GPSString(object):
                 self.azimuth = []
                 self.snr = []
                 if self.debug: 
-                    print fields
+                    eprint(fields)
                 for idx in range(4,fields.__len__() - 1, 4):
                     self.PRN.append(dec.Decimal(fields[idx]))
                     self.elevation.append(dec.Decimal(fields[idx + 1]))
@@ -318,8 +322,8 @@ class GPSString(object):
                         self.azimuth.append(dec.Decimal(fields[idx + 2]))
                     except dec.InvalidOperation:
                         self.azimuth.append(dec.Decimal('NaN'))
-                        print "The field Satellite Azimuth may be missing."
-                        print fields[idx + 3]
+                        eprint("The field Satellite Azimuth may be missing.")
+                        eprint(fields[idx + 3])
                     try:
                         self.snr.append(dec.Decimal(fields[idx + 3]))
                     except dec.InvalidOperation:
@@ -385,8 +389,8 @@ class GPSString(object):
                 gps_extract = m.group('match')
                 fields = gps_extract.split(',')
                 'Handle GGK Fields'
-                print fields[2]
-                print fields[2][4:6]
+                print(fields[2])
+                print(fields[2][4:6])
                 self.date = datetime.date(int(fields[2][4:6])+2000,
                                           int(fields[2][0:2]),
                                           int(fields[2][2:4]))
@@ -426,9 +430,9 @@ class GPSString(object):
         try:
             minute = dec.Decimal(tmptime[2:4])
         except dec.InvalidOperation:
-            print timestr
-            print tmptime[2:4]
-            print self.msg
+            print(timestr)
+            print(tmptime[2:4])
+            print(self.msg)
             sys.exit()
             
         seconds = int(dec.Decimal(tmptime[4:tmptime.__len__()]))
@@ -591,27 +595,39 @@ if __name__ == '__main__':
 
     ''' Handle options'''
     import argparse
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=("Parse GPS NMEA0183 ASCII "
+    "text data file(s), to one of: "
+    "1) stdout (default) "
+    "2) a file of the same as the input filename appended with 'parsed_STR.txt' "
+    "3) a user specified filename "
+    "4) a MATLAB compatible .mat file. (not yet supported)"))
+    
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-f','--filename', dest='filename',action='store',
                             help='specify the filename, default stdin', default=sys.stdin)
     group.add_argument('-g','--directory', dest='directory',action='store',
-                            help=('alternatively specify a directory and a suffix '
+                            help=('alternatively, specify a directory and a suffix '
                             'pattern (e.g. /path/::.gps). The directory will be '
                             'searched recursively and files matching the suffix '
-                            'specified after :: will be parsed into a single '
-                            'output file'), 
+                            'specified after :: will be parsed. The output will '
+                            ' go to separate output files if -o <directory> or '
+                            ' -o i is specified.' ), 
                             default="") 
     parser.add_argument('-s','--stringtype',dest='stringtype',action='store',
                            help=('specify which string to parse by specifying '
                            'the three-letter identifier (Currently supported '
                            'strings: '+ supportedstrings + ')'))
-    parser.add_argument('-o', dest='outputtofile',action='store_true',
-                       help='output to a file (inputfilename_parsed.txt)')
-    parser.add_argument('--outfile', dest='outfilename',action='store',
-                       help='specify an output filename', default=None)
+    parser.add_argument('-o', dest='output',action='store',
+                        default=None,
+                       help=('A directory or filename. If a directory, output' 
+                       'data to a file within the specified directory having '
+                       'a file name of directory/<inputfilename>_STR_parsed.txt)'
+                       ' where STR is the specified string to parse. If a file' 
+                       ' name, output to that explicit file. If -o is omitted,'
+                       ' data is written to stdout.'))
     parser.add_argument('-m',dest='matflag',action='store_true',
-                       help='Write the output file in MATLAB .mat format.', default=False)
+                        help='Write the output file in MATLAB .mat format. (NOT YET SUPPORTED)',
+                        default=False)
     parser.add_argument('-v',dest='verbose',action='count',
                          help='Verbose output. (-v, -vv, -vvv, etc.)')
             
@@ -621,61 +637,84 @@ if __name__ == '__main__':
     directory = args.directory
     stringtype = args.stringtype
     verbose = args.verbose
-    outputtofile = args.outputtofile
-    outfilename = args.outfilename
+    output = args.output
     matflag = args.matflag
-    
+
+            
     if verbose >= 1:
-        print "Arguments:"
+        print("Arguments:")
         arguments = vars(args)
         for key, value in arguments.iteritems():
-            print "\t%s:\t\t%s" % (key,str(value))
+            print("\t%s:\t\t%s" % (key,str(value)))
 
     if directory:       
         filestoprocess = []     
         directory, suffix = directory.split('::')
         if verbose >= 3:
-            print "directory: " + directory
-            print "suffix:    " + suffix
+            print("directory: " + directory)
+            print("suffix:    " + suffix)
         for root,subFolders, files in os.walk(directory):
             for fileval in files:
                 if fileval[-suffix.__len__():] == suffix:
                     filestoprocess.append(os.path.join(root,fileval))
     else:
         filestoprocess = [filename]
-        
-    if verbose >= 3:
-        print "Processing File list."
-        for f in filestoprocess:
-            print f
-        
-    
+
+    if filestoprocess.__len__() == 0:
+        print("No files found to process.")
+        sys.exit()
+
+    # Conditions are:
+    # 1) No -o is specified, write to std out.
+    # 2) -o is specified with a directory, write default file name to directory.
+    # 3) -o is specified with a filename. Write to the filename. 
+    outputtofile = False
+    outfilename = None 
+    saveto1file = False
+    # If we specified some kind of output, set it up (otherwise stdout is default)
+    if output:
+        outputtofile = True
+        # We can specify a directory. If so, set it as the output dir. 
+        if os.path.isdir(output):
+            outputdir = output  # outfilename will get set dyamamically based on input file name.
+            if verbose >=1:
+                print("Output directory: " + outputdir)
+                print("Output filename: Not specified")
+
+        # Or we can set a file name directly. Then set everything.
+        # Two things could have happened here. Either the directory did not 
+        # exist, or a filename was specified with it. Here we check to see that 
+        # the directory exists, and if so, we assume that anything further is 
+        # the requested filename. 
+        elif os.path.isdir(os.path.dirname(output)):
+            saveto1file = True
+            outputdir = os.path.dirname(output)
+            outfilename = os.path.basename(output)
+            if verbose >= 1:
+                print("Outputfilename: " + os.path.join(outputdir,outfilename))
+                
+        # Or quicklly specify the output directory as the input directory with an 'i'
+        elif output == 'i':
+            if directory:
+                outputdir = directory
+            else:
+                outputdir = os.path.dirname(filename)
+        else:
+            eprint("The argument to -g is not 'i', a valid directory or a valid/filename")
+            sys.exit()
+            
     if matflag:
         try:
             import scipy as sci
             import scipy.io as sio
         except:
-            print "Output to MATLAB file format requires the scipy module."
+            print("Output to MATLAB file format requires the scipy module.")
             sys.exit()
-            
-    
+                
     if not GPSString.GPS_IDs.has_key(stringtype):
-        print 'Unsupported string type: ' + str(stringtype)
+        print ('Unsupported string type: ' + str(stringtype))
         sys.exit()
             
-
-    fid = None
-    if outputtofile or matflag:
-        if outfilename == None and matflag:
-            outfilename = filename[0:-4] + '_parsed_'+ stringtype +'.mat'
-        elif outfilename == None and not matflag:
-            outfilename = filename[0:-4] + '_parsed_'+ stringtype +'.txt'
-
-    if outputtofile and verbose >= 1:
-        print "Writing to %s" % outfilename        
-
-    if outputtofile and not matflag:        
-        fid = file(outfilename,'w')
         
     def assign_fieldnames(stringtype):
         ''' A function to assing fieldnames when writing MATLAB structures.'''
@@ -747,7 +786,7 @@ if __name__ == '__main__':
         if fid:
             fid.write("\t".join(map(str,fieldstoprint)).expandtabs() + '\n')
         else:
-            print "\t".join(map(str,fieldstoprint)).expandtabs()
+            print("\t".join(map(str,fieldstoprint)).expandtabs())
 
     matlabepochplus1yr = datetime.datetime(1,1,1,0,0,0) 
     oneyr = timedelta(days=365)
@@ -782,21 +821,68 @@ if __name__ == '__main__':
             data[key] = sci.zeroes((864000,1),'double')
             data[key].fill(sci.nan)
 
-    ####################            
-    # PROCESS THE FILE #
-    ####################
+    if verbose >=3:
+        print("Entering debug mode")
+
+
+    #######################            
+    # PROCESS THE FILE(s) #
+    #######################
     for filename in filestoprocess:
+        
+        # Gives status to stdout only when output is not stdout.
+        if verbose >=1 and outputtofile:
+            print('Processing ' + filename)
         if filename != sys.stdin:
             filetoread = file(filename,'r')
         else:
             filetoread = filename
-        # for line in file(filename,'r'):
+        
+        # When FID is None we print to stdout, by default.
+        # But if we're saving to a file and we've explcity chosen it,
+        # Then the file may be open, in which case don't loose the fid.
+        if not saveto1file:
+            fid = None
+            
+        # Set up the output file name if output to a file is requested. 
+        # The output may be of txt or .mat type.
+        # By now the output directory (outputdir), is already specified.
+        if outputtofile or matflag:
+            if outfilename is not None:
+                pass
+            if outfilename == None and not matflag:
+                outfilename = (os.path.basename(filename[0:-4]) +
+                '_parsed_'+ stringtype +'.txt')
+            elif outfilename == None and matflag:
+                outfilename = (os.path.basename(filename[0:-4]) +
+                '_parsed_'+ stringtype +'.mat')
+
+            if verbose >=1:
+                print("Writing to %s" % os.path.join(outputdir,outfilename))        
+
+        # If we are saving to a txt file, open the file. 
+        # If it is the first process in the list, always open it. 
+        # If not, then only open a new file if not saving to a single file,
+        # which would happen if the file name was explicitly set.
+        if outputtofile and not matflag: 
+            if filename == filestoprocess[0]:
+                fid = file(os.path.join(outputdir,outfilename),'w')
+            elif not saveto1file:
+                fid = file(os.path.join(outputdir,outfilename),'w')
+
+        # By setting outfilename to None here we force creation of a new 
+        # output file for every input file. Otherwise a file for the first one 
+        # is created and this over-written with subseqeunt ones. We could write 
+        # all to a single file, but there are reasons we may not want to do this too.
+        if not saveto1file:
+            outfilename = None        
+        
         for line in filetoread:
     
             gps = GPSString(line)
             if verbose >=3:
                 gps.debug = verbose
-                print "Entering debug mode"
+
                 
             try:
                 gps.identify()  # populates gps.id
@@ -806,11 +892,11 @@ if __name__ == '__main__':
                     sys.stderr.write('Unrecognized NMEA string: %s\n' % gps.msg)
                 continue
             except:
-                print "Unexpected error:", sys.exc_info()[0]
+                eprint("Unexpected error:", sys.exc_info()[0])
                 raise
     
             if gps.debug:
-                print 'String Type: ' + gps.id
+                print('String Type: ' + gps.id)
     
             'Only handle string specified'
             if gps.id != stringtype:
@@ -836,7 +922,7 @@ if __name__ == '__main__':
                 gps.date = PCtime.date()
             except:
                 if gps.debug:
-                    print "NO Time Stamping Found. Using today's date."
+                    print("NO Time Stamping Found. Using today's date.")
                 gps.date = datetime.datetime.utcnow().date()
             
             ''' Parse and write data.'''
@@ -845,7 +931,7 @@ if __name__ == '__main__':
                 try: 
                     gps.parse()
                     if gps.debug:
-                        print "Fields: " + ','.join(gps.fields.keys())
+                        print("Fields: " + ','.join(gps.fields.keys()))
                         
                 except gps.FailedChecksum:
                     sys.stderr.write( "Failed Checksum: "
@@ -855,7 +941,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                     
                
@@ -885,7 +971,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                     
                 fieldstoprint = [gps.datetimevec(gps.datetime)]
@@ -907,7 +993,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                       
                 fieldstoprint = [gps.datetimevec(gps.datetime),
@@ -934,7 +1020,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                       
                 fieldstoprint = [gps.datetimevec(gps.datetime),
@@ -962,7 +1048,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                       
                     
@@ -987,7 +1073,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
       
                 fieldstoprint = [gps.datetimevec(PCtime),
@@ -1008,7 +1094,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                     
                 fieldstoprint = [gps.datetimevec(PCtime),
@@ -1027,7 +1113,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                 
                 fieldstoprint = [gps.datetimevec(gps.datetime),
@@ -1055,7 +1141,7 @@ if __name__ == '__main__':
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
-                    print "Unexpected error:", sys.exc_info()[0]
+                    eprint("Unexpected error:", sys.exc_info()[0])
                     raise
       
                 fieldstoprint = [gps.datetimevec(gps.datetime), 
@@ -1066,6 +1152,10 @@ if __name__ == '__main__':
                                  gps.dop, 
                                  gps.eht]
                 printfields(fieldstoprint,fid)
-    
-        if outputtofile:
+        
+        ###############################################################
+        ##### END READING FILE ########################################
+        ###############################################################
+                
+        if outputtofile and not saveto1file:
             fid.close()
