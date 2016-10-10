@@ -193,8 +193,14 @@ class GPSString(object):
                 self.handle_lon ( fields[4], fields[5] )
                 self.quality = dec.Decimal( fields[6] )
                 self.svs = dec.Decimal( fields[7] )
-                self.hdop = dec.Decimal( fields[8]) 
-                self.antennaheightMSL = dec.Decimal(fields[9])
+                self.hdop = dec.Decimal( fields[8])
+                try:
+                    self.antennaheight = dec.Decimal(fields[9])
+                except dec.InvalidOperation:
+                    if self.debug:
+                        eprint("The field antennaheight may not be present.")
+                        eprint("self.msg")
+                    self.antennaheight = dec.Decimal('NaN')
                 try:
                     self.geoid = dec.Decimal(fields[11])
                 except dec.InvalidOperation:
@@ -202,7 +208,7 @@ class GPSString(object):
                         eprint("The field GEOID Height may not be present.")
                         eprint(self.msg)
                         #print fields[11]
-                        self.geoid = dec.Decimal('NaN')
+                    self.geoid = dec.Decimal('NaN')
                 try:
                     self.dgpsage = dec.Decimal(fields[13])
                 except dec.InvalidOperation:
@@ -210,7 +216,7 @@ class GPSString(object):
                         eprint("The field DGPS Age may not be present.")
                         eprint(self.msg)                        
                         #print fields[13]
-                        self.dgpspage = dec.Decimal('NaN')
+                    self.dgpspage = dec.Decimal('NaN')
                 try:
                     self.stationid = dec.Decimal(fields[14] )
                 except dec.InvalidOperation:
@@ -218,7 +224,7 @@ class GPSString(object):
                         eprint("The field DGPS Station ID may not be present.")
                         eprint(self.msg)
                         #print 'StationID: %s' % fields[14]
-                        self.stationid = dec.Decimal('NaN')
+                    self.stationid = dec.Decimal('NaN')
                         
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
@@ -241,7 +247,7 @@ class GPSString(object):
                     if self.debug:
                         eprint("Thef ield Local TZ Offset Hours may not be present.")
                         eprint (fields[5])
-                        self.tzoffsethours = dec.Decimal('NaN')
+                    self.tzoffsethours = dec.Decimal('NaN')
 
                 try:
                     self.tzoffsetminutes = dec.Decimal( fields[6] )
@@ -249,7 +255,7 @@ class GPSString(object):
                     if self.debug: 
                         eprint("The field Local TZ Offset Minutes may not be present.")
                         eprint(fields[6])
-                        self.tzoffsetminutes = dec.Decimal('NaN')
+                    self.tzoffsetminutes = dec.Decimal('NaN')
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
  
@@ -944,14 +950,13 @@ if __name__ == '__main__':
                     eprint("Unexpected error:", sys.exc_info()[0])
                     raise
                     
-               
                 fieldstoprint = [gps.datetimevec(gps.datetime), 
                                  gps.latitude, 
                                  gps.longitude, 
                                  gps.quality,
                                  gps.svs, 
                                  gps.hdop, 
-                                 gps.antennaheightMSL,
+                                 gps.antennaheight,
                                  gps.geoid]
                 if PCtime:
                     fieldstoprint.insert(0,gps.datetimevec(PCtime))
