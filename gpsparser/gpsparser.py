@@ -269,19 +269,22 @@ class GPSString(object):
                 fields = gps_extract.split(',')
                 'Handle RMC Fields'
                 'Getting the date first ensure handlegpstime will return a full'
-                'datetime object'                
-                self.datetime = datetime.date(int(fields[9][4:6])+2000,
-                                   int(fields[9][2:4]),
-                                   int(fields[10][0:2]))
-                self.handlegpstime(fields[1])
-                if fields[2] == 'A':
-                    self.fixstatus = 1
-                else:
-                    self.fixstatus = 0
-                self.handle_lat(fields[3], fields[4])
-                self.handle_lon(fields[5], fields[6])
-                self.knots = fields[7]
-                self.cog = fields[8]
+                'datetime object'      
+                try:
+                    self.datetime = datetime.date(int(fields[9][4:6])+2000,
+                                                  int(fields[9][2:4]),
+                                                  int(fields[9][0:2]))
+                    self.handlegpstime(fields[1])
+                    if fields[2] == 'A':
+                        self.fixstatus = 1
+                    else:
+                        self.fixstatus = 0
+                    self.handle_lat(fields[3], fields[4])
+                    self.handle_lon(fields[5], fields[6])
+                    self.knots = fields[7]
+                    self.cog = fields[8]
+                except:
+                    raise self.FailedParsing, 'Failed to parse %s' % self.msg
             else:
                 raise self.FailedParsing, 'Failed to parse %s' % self.msg
  
