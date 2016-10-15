@@ -284,6 +284,9 @@ class GPSString(object):
                     self.handle_lon(fields[5], fields[6])
                     self.knots = fields[7]
                     self.cog = fields[8]
+                    self.magneticvariation = fields[10]
+                    if fields[11] == 'W':
+                        self.magneticvariation = '-'+ self.magneticvariation
                 except:
                     raise self.FailedParsing, 'Failed to parse %s' % self.msg
             else:
@@ -758,7 +761,8 @@ if __name__ == '__main__':
                            'latitude',
                            'longitude',
                            'knots',
-                           'cog'],
+                           'cog',
+                           'magneticvariation'],
                     "GST":['pctime',
                            'gpstime',
                            'residualrms',
@@ -1030,7 +1034,8 @@ if __name__ == '__main__':
                                  gps.latitude,
                                  gps.longitude,
                                  gps.knots,
-                                 gps.cog]
+                                 gps.cog,
+                                 gps.magneticvariation]
     
                 if PCtime:
                     fieldstoprint.insert(0,gps.datetimevec(PCtime))
