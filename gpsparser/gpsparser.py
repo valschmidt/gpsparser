@@ -76,6 +76,7 @@ import os
 import sys
 import datetime
 from datetime import timedelta
+import dateutil.parser
 import re
 #import string
 import decimal as dec
@@ -463,6 +464,7 @@ class GPSString(object):
         @param lattmp: The NMEA latitude string. (DDMM.MMMM)
         @param lathem: The NMEA latitude hemisphere ('N'/'S')
         '''
+        
         self.latitude = '%.10f' % (dec.Decimal(lattmp[0:2]) + 
                          dec.Decimal(lattmp[2:lattmp.__len__()]) / 60)
         self.latitude = dec.Decimal(self.latitude)
@@ -518,7 +520,17 @@ class GPSString(object):
         if m:
             epochtime = float(m.group('epochtime'))
             dts = datetime.datetime.utcfromtimestamp(epochtime)
-        return dts
+            return dts
+
+    def strip_timestamp(self):
+        '''
+        Strips a time stamp in if possible using datutils
+        '''
+        date_exp = re.compile('\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d?\.?\d+')
+        m = re.search(date_exp,self.msg)
+        if m:
+            dts = dateutil.parser.parse(m.group())
+            return dts
 
     def datetimevec(self,dts):
         '''
@@ -838,7 +850,8 @@ if __name__ == '__main__':
     # PROCESS THE FILE(s) #
     #######################
     for filename in filestoprocess:
-        
+
+            
         # Gives status to stdout only when output is not stdout.
         if verbose >=1 and outputtofile:
             print('Processing ' + filename)
@@ -859,11 +872,14 @@ if __name__ == '__main__':
         if outputtofile or matflag:
             if outfilename is not None:
                 pass
+            if outfilename == None and not matflag and filename == sys.stdin:
+                outfilename = ('data' +
+                '_parsed_'+ stringtype +'.txt')
             if outfilename == None and not matflag:
-                outfilename = (os.path.basename(filename[0:-4]) +
+                outfilename = (os.path.basename(filename) +
                 '_parsed_'+ stringtype +'.txt')
             elif outfilename == None and matflag:
-                outfilename = (os.path.basename(filename[0:-4]) +
+                outfilename = (os.path.basename(filename) +
                 '_parsed_'+ stringtype +'.mat')
 
             if verbose >=1:
@@ -919,6 +935,8 @@ if __name__ == '__main__':
             PCtime = gps.stripisotime()
             if PCtime == None:
                 PCtime = gps.stripepochtime()
+            if PCtime == None:
+                PCtime = gps.strip_timestamp()
                 
             # Many GPS strings have only a time stamp with no date. Here we try to 
             # use the date provided by a PC time stamp during the logging porcess.
@@ -947,6 +965,9 @@ if __name__ == '__main__':
                                       " :: " + gps.msg + '\n') 
                     continue
                 except gps.FailedParsing:
+                    sys.stderr.write("Failed Parsing Line: %s" % line)
+                    continue
+                except dec.InvalidOperation:
                     sys.stderr.write("Failed Parsing Line: %s" % line)
                     continue
                 except:
